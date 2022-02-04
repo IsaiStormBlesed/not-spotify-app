@@ -1,3 +1,5 @@
+image: gitpod/workspace-postgres
+
 # List the start up tasks. Learn more https://www.gitpod.io/docs/config-start-tasks/
 tasks:
   - init: npm install # runs during prebuild
@@ -7,3 +9,10 @@ tasks:
 ports:
   - port: 3000
     onOpen: open-browser
+  - port: 5432
+    onOpen: ignore
+
+github:
+  prebuilds:
+    master: true
+
