@@ -1,38 +1,39 @@
-import NextImage from "next/image";
-import NextLink from "next/link";
-import { 
+import NextImage from 'next/image'
+import NextLink from 'next/link'
+import {
   Box,
   List,
-  ListItem, 
+  ListItem,
   ListIcon,
-  LinkBox, 
+  LinkBox,
   LinkOverlay,
   Divider,
-  Center
- } from "@chakra-ui/layout";
- import { 
-   MdHome,
-   MdSearch,
-   MdLibraryMusic,
-   MdPlaylistAdd,
-   MdFavorite
-  } from "react-icons/md";
+  Center,
+} from '@chakra-ui/layout'
+import {
+  MdHome,
+  MdSearch,
+  MdLibraryMusic,
+  MdPlaylistAdd,
+  MdFavorite,
+} from 'react-icons/md'
+import { usePlaylist } from '../lib/hooks'
 
 const navMenuItems = [
   {
     name: 'Home',
     icon: MdHome,
-    route: '/'
+    route: '/',
   },
   {
     name: 'Search',
     icon: MdSearch,
-    route: '/'
+    route: '/',
   },
   {
     name: 'Your Library',
     icon: MdLibraryMusic,
-    route: '/library'
+    route: '/library',
   },
 ]
 
@@ -40,92 +41,94 @@ const menuMusic = [
   {
     name: 'Create Playlist',
     icon: MdPlaylistAdd,
-    route: '/'
+    route: '/',
   },
   {
     name: 'Favorites',
     icon: MdFavorite,
-    route: '/favorites'
+    route: '/favorites',
   },
 ]
 
-const playlist = new Array(25).fill(1).map((_, i) => `Playlist No ${i + 1}`)
+//const playlist = new Array(25).fill(1).map((_, i) => `Playlist No ${i + 1}`)
 
 const Sidebar = () => {
+  const { playlists } = usePlaylist()
+
   return (
     // Layout Box
     <Box
-      width='100%'
-      height='calc(100vh - 100px)'
-      bg='black'
-      paddingX='5px'
-      color='gray'
+      width="100%"
+      height="calc(100vh - 100px)"
+      bg="black"
+      paddingX="5px"
+      color="gray"
     >
       {/* Content Box */}
-      <Box paddingY='20px' height='100%'>
+      <Box paddingY="20px" height="100%">
         {/* ImageBox */}
-        <Box width='120px' marginBottom='20px' paddingX='20px' >
-          <NextImage src='/logo.svg' height={60} width={120}/>
+        <Box width="120px" marginBottom="20px" paddingX="20px">
+          <NextImage src="/logo.svg" height={60} width={120} />
         </Box>
 
         {/* NavItems Content Start*/}
-        <Box marginBottom='20px'>
-          <List spacing={2} >
-            {
-              navMenuItems.map(item => (
-                <ListItem paddingX='20px' fontSize='16px' key={item.name} >
-                  <LinkBox>
-                    <NextLink href={item.route} passHref >
-                      <LinkOverlay>
-                        <ListIcon as={item.icon} color='white' marginRight='20px' />
-                        { item.name }
-                      </LinkOverlay>
-                    </NextLink>
-                  </LinkBox>        
-                </ListItem>
-              ))
-            }
+        <Box marginBottom="20px">
+          <List spacing={2}>
+            {navMenuItems.map((item) => (
+              <ListItem paddingX="20px" fontSize="16px" key={item.name}>
+                <LinkBox>
+                  <NextLink href={item.route} passHref>
+                    <LinkOverlay>
+                      <ListIcon
+                        as={item.icon}
+                        color="white"
+                        marginRight="20px"
+                      />
+                      {item.name}
+                    </LinkOverlay>
+                  </NextLink>
+                </LinkBox>
+              </ListItem>
+            ))}
           </List>
         </Box>
 
         {/* Music Menu */}
         <Box>
-          <List spacing={2} >
-            {
-              menuMusic.map(item => (
-                <ListItem paddingX='20px' fontSize='16px' key={item.name}>
-                  <LinkBox>
-                    <NextLink href={item.route} passHref >
-                      <LinkOverlay>
-                        <ListIcon as={item.icon} color='white' marginRight='20px' />
-                        { item.name }
-                      </LinkOverlay>
-                    </NextLink>
-                  </LinkBox> 
-                </ListItem>
-              ))
-            }
+          <List spacing={2}>
+            {menuMusic.map((item) => (
+              <ListItem paddingX="20px" fontSize="16px" key={item.name}>
+                <LinkBox>
+                  <NextLink href={item.route} passHref>
+                    <LinkOverlay>
+                      <ListIcon
+                        as={item.icon}
+                        color="white"
+                        marginRight="20px"
+                      />
+                      {item.name}
+                    </LinkOverlay>
+                  </NextLink>
+                </LinkBox>
+              </ListItem>
+            ))}
           </List>
         </Box>
 
-        <Divider marginY='20px' color='gray.800' />
-        
+        <Divider marginY="20px" color="gray.800" />
+
         {/* Check the height property */}
-        <Box paddingY='20px' overflowY='auto' height='50%' >
-          <List spacing={2} >
-            {
-              playlist.map(item => (
-                <ListItem paddingX='20px' key={item} >
-                  <LinkBox>
-                    <NextLink href='/' passHref >
-                      <LinkOverlay>
-                        {item}
-                      </LinkOverlay>
-                    </NextLink>
-                  </LinkBox>
-                </ListItem>
-              ))
-            }
+        <Box paddingY="20px" overflowY="auto" height="50%">
+          <List spacing={2}>
+            {playlists.map((playlist) => (
+              <ListItem paddingX="20px" key={playlist.id}>
+                <LinkBox>
+                  <NextLink href="/" passHref>
+                    <LinkOverlay>{playlist.name}</LinkOverlay>
+                  </NextLink>
+                </LinkBox>
+              </ListItem>
+            ))}
           </List>
         </Box>
       </Box>
