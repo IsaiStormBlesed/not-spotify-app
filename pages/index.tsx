@@ -1,5 +1,13 @@
+import GradientLayout from '../components/gradientLayout'
+
 export default function Home() {
   return (
-    <h1>MAIN CONTENT</h1>
+    <GradientLayout
+      color="red"
+      title="Isai Reyes"
+      subtitle="profile"
+      description="A true musician"
+      roundImage
+    />
   )
 }
