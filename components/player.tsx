@@ -17,18 +17,41 @@ import {
   RangeSliderThumb,
   RangeSliderTrack,
 } from '@chakra-ui/react'
+import { useState } from 'react'
 
-const Player = () => {
+const Player = ({ songs, activeSong }) => {
+  const [playing, setPlaying] = useState(false)
+  const [index, setIndex] = useState(0)
+  const [seek, setSeek] = useState(0.0)
+  const [repeat, setRepeat] = useState(false)
+  const [shuffle, setShuffle] = useState(false)
+  const [duration, setDuration] = useState(0.0)
+
+  const setPlayState = (value) => {
+    setPlaying(value)
+  }
+
+  const onShuffle = () => {
+    setShuffle((state) => !state)
+  }
+
+  const onRepeat = () => {
+    setRepeat((state) => !state)
+  }
+
   return (
     <Box>
+      <Box>{/* <ReactHowler playing={playing} src={activeSong?.url} /> */}</Box>
       <Center color="gray.600">
         <ButtonGroup>
           <IconButton
+            color={shuffle ? 'white' : 'gray.600'}
             outline="none"
             fontSize="24px"
             variant="link"
             aria-label="shuffle"
             icon={<MdShuffle />}
+            onClick={onShuffle}
           />
           <IconButton
             outline="none"
@@ -37,22 +60,27 @@ const Player = () => {
             aria-label="previous"
             icon={<MdSkipPrevious />}
           />
-          <IconButton
-            color="white"
-            outline="none"
-            fontSize="40px"
-            variant="link"
-            aria-label="play"
-            icon={<MdOutlinePlayCircleFilled />}
-          />
-          <IconButton
-            color="white"
-            outline="none"
-            fontSize="40px"
-            variant="link"
-            aria-label="pause"
-            icon={<MdOutlinePauseCircleFilled />}
-          />
+          {playing ? (
+            <IconButton
+              color="white"
+              outline="none"
+              fontSize="40px"
+              variant="link"
+              aria-label="pause"
+              icon={<MdOutlinePauseCircleFilled />}
+              onClick={() => setPlayState(false)}
+            />
+          ) : (
+            <IconButton
+              color="white"
+              outline="none"
+              fontSize="40px"
+              variant="link"
+              aria-label="play"
+              icon={<MdOutlinePlayCircleFilled />}
+              onClick={() => setPlayState(true)}
+            />
+          )}
           <IconButton
             outline="none"
             fontSize="24px"
@@ -61,11 +89,13 @@ const Player = () => {
             icon={<MdSkipNext />}
           />
           <IconButton
+            color={repeat ? 'white' : 'gray.600'}
             outline="none"
             fontSize="24px"
             variant="link"
             aria-label="repeat"
             icon={<MdOutlineRepeat />}
+            onClick={onRepeat}
           />
         </ButtonGroup>
       </Center>
@@ -77,7 +107,7 @@ const Player = () => {
               1:30
             </Text>
           </Box>
-          <Box width="80%">
+          <Flex width="80%" align="end">
             <RangeSlider
               aria-label={['min', 'max']}
               step={0.1}
@@ -90,7 +120,7 @@ const Player = () => {
               </RangeSliderTrack>
               <RangeSliderThumb index={0} />
             </RangeSlider>
-          </Box>
+          </Flex>
           <Box width="10%" textAlign="center">
             <Text fontSize="xs">2:50</Text>
           </Box>

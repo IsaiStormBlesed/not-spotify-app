@@ -4,8 +4,6 @@ import GradientLayout from '../components/gradientLayout'
 import prisma from '../lib/prisma'
 
 export default function Home({ artists }) {
-  console.log(artists)
-
   return (
     <GradientLayout
       color="blue"
@@ -24,7 +22,13 @@ export default function Home({ artists }) {
         </Box>
         <Flex gap="10px">
           {artists.map((artist) => (
-            <Box bg="gray.900" padding="15px" borderRadius="5px" width="200px">
+            <Box
+              key={artist.id}
+              bg="gray.900"
+              padding="15px"
+              borderRadius="5px"
+              width="200px"
+            >
               <Image
                 src="https://placekitten.com/300/300"
                 borderRadius="100%"
