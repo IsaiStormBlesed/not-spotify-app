@@ -39,7 +39,7 @@ export const getServerSideProps = async ({ query, req }) => {
   let user
 
   try {
-    const { id } = validateToken(req.cookies.NO_SPOTIFY_TOKEN)
+    user = validateToken(req.cookies.NO_SPOTIFY_TOKEN)
   } catch (error) {
     return {
       redirect: {
