@@ -37,6 +37,7 @@ const SongsTable = ({ songs }) => {
                 transition: 'all .3s',
                 '&:hover': {
                   bgColor: 'rgba(255,255,255,0.1)',
+                  cursor: 'pointer',
                 },
               }}
             >
