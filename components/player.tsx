@@ -17,15 +17,34 @@ import {
   RangeSliderThumb,
   RangeSliderTrack,
 } from '@chakra-ui/react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { formatTime } from '../lib/formatters'
 
 const Player = ({ songs, activeSong }) => {
-  const [playing, setPlaying] = useState(true)
+  const [playing, setPlaying] = useState(false)
   const [index, setIndex] = useState(0)
   const [seek, setSeek] = useState(0.0)
+  const [isSeeking, setIsSeeking] = useState(false)
   const [repeat, setRepeat] = useState(false)
   const [shuffle, setShuffle] = useState(false)
   const [duration, setDuration] = useState(0.0)
+  const soundRef = useRef(null)
+
+  useEffect(() => {
+    let timerId
+
+    if (playing && !isSeeking) {
+      const f = () => {
+        setSeek(soundRef.current.seek())
+        timerId = requestAnimationFrame(f)
+      }
+
+      timerId = requestAnimationFrame(f)
+      return () => cancelAnimationFrame(timerId)
+    }
+
+    cancelAnimationFrame(timerId)
+  }, [playing, isSeeking])
 
   const setPlayState = (value) => {
     setPlaying(value)
@@ -39,10 +58,59 @@ const Player = ({ songs, activeSong }) => {
     setRepeat((state) => !state)
   }
 
+  const prevSong = () => {
+    setIndex((state) => {
+      return state ? state - 1 : songs.length - 1
+    })
+  }
+
+  const nextSong = () => {
+    setIndex((state) => {
+      if (shuffle) {
+        const next = Math.floor(Math.random() * songs.length)
+
+        if (next === state) {
+          return nextSong()
+        }
+
+        return next
+      } else {
+        return state === songs.length - 1 ? 0 : state + 1
+      }
+    })
+  }
+
+  const onEnd = () => {
+    if (repeat) {
+      setSeek(0)
+      soundRef.current.seek(0)
+    } else {
+      nextSong()
+    }
+  }
+
+  const onLoad = () => {
+    const songDuration = soundRef.current.duration()
+    console.log(songDuration)
+
+    setDuration(songDuration)
+  }
+
+  const onSeek = (e) => {
+    setSeek(parseFloat(e[0]))
+    soundRef.current.seek(e[0])
+  }
+
   return (
     <Box>
       <Box>
-        <ReactHowler playing={playing} src={activeSong?.url} />
+        <ReactHowler
+          playing={playing}
+          src={activeSong?.url}
+          ref={soundRef}
+          onLoad={onLoad}
+          onEnd={onEnd}
+        />
       </Box>
       <Center color="gray.600">
         <ButtonGroup>
@@ -61,6 +129,7 @@ const Player = ({ songs, activeSong }) => {
             variant="link"
             aria-label="previous"
             icon={<MdSkipPrevious />}
+            onClick={prevSong}
           />
           {playing ? (
             <IconButton
@@ -89,6 +158,7 @@ const Player = ({ songs, activeSong }) => {
             variant="link"
             aria-label="next"
             icon={<MdSkipNext />}
+            onClick={nextSong}
           />
           <IconButton
             color={repeat ? 'white' : 'gray.600'}
@@ -106,7 +176,7 @@ const Player = ({ songs, activeSong }) => {
         <Flex justify="center" align="end">
           <Box width="10%">
             <Text fontSize="xs" textAlign="center">
-              1:30
+              {formatTime(seek)}
             </Text>
           </Box>
           <Flex width="80%" align="end">
@@ -114,7 +184,11 @@ const Player = ({ songs, activeSong }) => {
               aria-label={['min', 'max']}
               step={0.1}
               min={0}
-              max={250}
+              max={duration ? duration.toFixed(2) : 0}
+              onChange={onSeek}
+              value={[seek]}
+              onChangeStart={() => setIsSeeking(true)}
+              onChangeEnd={() => setIsSeeking(false)}
               id="player-range"
             >
               <RangeSliderTrack bg="gray.800">
@@ -124,7 +198,7 @@ const Player = ({ songs, activeSong }) => {
             </RangeSlider>
           </Flex>
           <Box width="10%" textAlign="center">
-            <Text fontSize="xs">2:50</Text>
+            <Text fontSize="xs">{formatTime(duration)}</Text>
           </Box>
         </Flex>
       </Box>
